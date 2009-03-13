@@ -27,7 +27,7 @@ class MainGUI_E:
       self.win points to the e.WIndow
   """
 
-  keys = ["Bksp","","","Clr","7","8","9","/","4","5","6","*","1","2","3","-","0",".","=","+"]
+  keys = ["Bksp","(",")","Clr","7","8","9","/","4","5","6","*","1","2","3","-","0",".","=","+"]
 
   def cb_entry_resize (self, entry, *args, **kwargs):
     print "entry " + str(entry)
@@ -66,7 +66,7 @@ class MainGUI_E:
     except ValueError:
         digit = False
 
-    if digit or bt.name in ['+','-','/','*','.']:
+    if digit or bt.name in ['+','-','/','*','.','(',')']:
        # simply append keys
        self.entry.entry_set(content + bt.name)
 

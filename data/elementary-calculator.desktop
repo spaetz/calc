@@ -1,15 +1,11 @@
 [Desktop Entry]
-Name=Calculator
-Name[fr]=Calculatrice
-Name[it]=Calcolatrice
-Name[ru]=Калькулятор
-Name[sv]=Miniräknare
+Name=pCalc
 Comment=Perform simple calculations
 Encoding=UTF-8
 Version=0.0.1
 Type=Application
-Exec=calc
-Icon=/usr/share/pixmaps/calculator.png
+Exec=/usr/bin/calc
+Icon=calculator.png
 Terminal=false
 Categories=Utilities;Application;Office;
 SingleInstance=true
