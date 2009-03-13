@@ -1,0 +1,153 @@
+#!/usr/bin/env python
+# (c) 2009 Sebastian Spaeth, licensed under MIT license
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+from __future__ import division # makes 7/2 = 3.5 and not 3
+import elementary as e
+import e_dbus
+
+class MainGUI_E:
+  """ The main elementary window.
+      self.win points to the e.WIndow
+  """
+
+  keys = ["Bksp","","","Clr","7","8","9","/","4","5","6","*","1","2","3","-","0",".","=","+"]
+
+  def cb_entry_resize (self, entry, *args, **kwargs):
+    print "entry " + str(entry)
+    #self.entry.size_hint_max_set(480,78)
+    #self.entry.size_hint_min_set(480,78)
+    (p_w, p_h) = entry.parent_get().size_get()
+    (w, h) = entry.size_get()
+    print str(p_w) + ',' + str(p_h) + '('+ str(w) + ',' + str(h)
+    if p_w < w:
+      newscale = entry.scale_get() - 0.5
+      entry.scale_set (newscale)
+    return False
+
+  def cb_buttonpress(self, bt, *args):
+    """ callback when a calc button has been pressed """
+    content = self.entry.entry_get().rstrip('<br>')
+
+    # pretty hacky way to scale the number entry to always fit the screen
+    (p_w, p_h) = self.entry.parent_get().size_get()
+    (w, h) = self.entry.size_get()
+    oldscale = self.entry.scale_get()
+
+    if (p_w - 50) < w:
+      newscale = oldscale - 0.4
+      print str(newscale)
+      self.entry.scale_set (newscale)
+    elif oldscale < 2.5 and float(p_w / max(w,1)) > 1.5:
+      newscale = oldscale + 0.4
+      self.entry.scale_set (newscale)
+
+    # now start handling the keypress
+    try:
+        # is it a digit?
+        int(bt.name)
+        digit = True
+    except ValueError:
+        digit = False
+
+    if digit or bt.name in ['+','-','/','*','.']:
+       # simply append keys
+       self.entry.entry_set(content + bt.name)
+
+    elif bt.name == 'Bksp':
+       #remove last char
+       self.entry.entry_set(content[:-1])
+
+    elif bt.name == 'Clr':
+       #remove everything
+       self.entry.entry_set('')
+
+    elif bt.name == '=':
+       # compute result
+       try:
+         res = str(eval(content))
+       except SyntaxError:
+         res = 'Invalid Syntax'
+       finally:
+         self.entry.entry_set(res)
+
+
+  def __init__(self):
+    self.win = e.Window("calc", e.ELM_WIN_BASIC)
+    self.win.title_set("Calculator")
+    self.win.size_hint_align_set(-1.0, -1.0)
+    self.win.size_hint_weight_set(0.0, 0.0)
+    self.win.destroy = self.quit
+
+    # add background
+    bg = e.Background(self.win)
+    bg.size_hint_weight_set(1.0, 1.0)
+    bg.show()
+    self.win.resize_object_add(bg)
+
+    #add the mainbox
+    mainbox  = e.Box(self.win)
+    mainbox.size_hint_align_set(-1.0, -1.0)
+    mainbox.size_hint_weight_set(0.0, 0.0)
+    mainbox.show()
+    self.win.resize_object_add(mainbox)
+
+    # Number display
+    self.entry = e.Entry(self.win)
+    self.entry.single_line_set(True)
+    self.entry.size_hint_align_set(1.0, -1.0)
+    self.entry.size_hint_weight_set(0.0, 0.0)
+    self.entry.size_hint_max_set(480,78)
+    self.entry.size_hint_min_set(480,78)
+    self.entry.scale_set(2.5)
+    self.entry.show()
+    #self.entry.on_resize_add(self.cb_entry_resize)
+    mainbox.pack_start(self.entry)
+
+    # Table containing all keys
+    tab = e.Table(mainbox)
+    tab.size_hint_align_set(-1.0, -1.0)
+    tab.size_hint_weight_set(1.0, 1.0)
+    tab.homogenous_set(True)
+    for (i, key) in enumerate(self.keys):
+      bt = e.Button(tab)
+      bt.size_hint_align_set(-1.0, -1.0)
+      bt.size_hint_weight_set(1.0, 1.0)
+      bt.label_set(key)
+      bt.name_set(key)
+      bt.clicked = self.cb_buttonpress
+      bt.show()
+      (row, col) = divmod(i, 4)
+      tab.pack(bt, col, row, 1, 1)
+    tab.show()
+    mainbox.pack_end(tab)
+    self.win.show()
+
+  def run(self):
+    e.run()
+
+  def quit(self, *args, **kwargs):
+    """ Callback when the main window is deleted """
+    e.exit()
+
+if __name__ == '__main__':
+  e.init()
+  gui = MainGUI_E()
+  gui.run()
+  e.shutdown()
