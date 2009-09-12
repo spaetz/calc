@@ -49,12 +49,12 @@ class MainGUI_E:
     (w, h) = self.entry.size_get()
     oldscale = self.entry.scale_get()
 
-    if (p_w - 50) < w:
+    if (p_w - 50) < w and oldscale > 0.6:
       newscale = oldscale - 0.4
-      print str(newscale)
       self.entry.scale_set (newscale)
-    elif oldscale < 2.5 and float(p_w / max(w,1)) > 1.5:
+    elif (oldscale < 0.6  and float(p_w / max(w,1)) > 2.5) or (oldscale < 2.5 and oldscale > 0.6 and float(p_w / max(w,1)) > 1.5):
       newscale = oldscale + 0.4
+      print str(newscale)
       self.entry.scale_set (newscale)
 
     # now start handling the keypress
@@ -76,6 +76,7 @@ class MainGUI_E:
     elif bt.name == 'Clear':
        #remove everything
        self.entry.entry_set('')
+       self.entry.scale_set(2.5)
 
     elif bt.name == '=':
        # compute result
