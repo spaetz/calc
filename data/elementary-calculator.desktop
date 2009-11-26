@@ -1,8 +1,8 @@
 [Desktop Entry]
-Name=pCalc
+Name=Calc
 Comment=Perform simple calculations
 Encoding=UTF-8
-Version=0.0.1
+Version=0.0.3
 Type=Application
 Exec=/usr/bin/calc
 Icon=calculator.png
