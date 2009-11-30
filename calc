@@ -92,7 +92,7 @@ class MainGUI_E:
     self.win.title_set("Calculator")
     self.win.size_hint_align_set(-1.0, -1.0)
     self.win.size_hint_weight_set(0.0, 0.0)
-    self.win.destroy = self.quit
+    self.win.callback_destroy_add(self.quit)
 
     # add background
     bg = e.Background(self.win)
@@ -130,7 +130,7 @@ class MainGUI_E:
       bt.size_hint_weight_set(1.0, 1.0)
       bt.label_set(key)
       bt.name_set(key)
-      bt.clicked = self.cb_buttonpress
+      bt._callback_add('clicked', self.cb_buttonpress)
       bt.show()
       (row, col) = divmod(i, 4)
       tab.pack(bt, col, row, 1, 1)
