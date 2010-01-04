@@ -1,0 +1,9 @@
+README for ecalc
+================
+
+TODO
+====
+- filter out the content passed to the eval() call
+- rename calc to ecalc
+- document the usage of eval() in the README to not surprise people
+- rewrite in C/vala using a bison backend for increased startup speed?
