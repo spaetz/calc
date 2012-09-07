@@ -92,7 +92,7 @@ class MainGUI_E:
     self.win.title_set("Calculator")
     self.win.size_hint_align_set(-1.0, -1.0)
     self.win.size_hint_weight_set(0.0, 0.0)
-    self.win.callback_destroy_add(self.quit)
+    self.win.callback_delete_request_add(self.quit)
 
     # add background
     bg = e.Background(self.win)
@@ -123,12 +123,12 @@ class MainGUI_E:
     tab = e.Table(mainbox)
     tab.size_hint_align_set(-1.0, -1.0)
     tab.size_hint_weight_set(1.0, 1.0)
-    tab.homogenous_set(True)
+    tab.homogeneous_set(True)
     for (i, key) in enumerate(self.keys):
       bt = e.Button(tab)
       bt.size_hint_align_set(-1.0, -1.0)
       bt.size_hint_weight_set(1.0, 1.0)
-      bt.label_set(key)
+      bt.text_set(key)
       bt.name_set(key)
       bt._callback_add('clicked', self.cb_buttonpress)
       bt.show()
